@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import Tbody from "./Tbody";
+import Thead from "./Thead";
 
 const USERS = [
   { id: 1, name: "Andy", age: 32 },
@@ -14,12 +16,12 @@ const USERS = [
 
 const Filter = () => {
   const [dataFilter, setDataFilter] = useState(USERS);
-
-  const keys = Object.keys(USERS[0]);
-
   const [name, setName] = useState("");
   const [age, setAge] = useState("");
   const [id, setId] = useState("");
+  const [sort, setSort] = useState(true);
+
+  const keys = Object.keys(USERS[0]);
 
   const filterName = (e) => {
     const keyword = e.target.value;
@@ -53,7 +55,6 @@ const Filter = () => {
 
   const filterId = (e) => {
     const keyword = e.target.value;
-
     if (keyword !== "") {
       const res = USERS.filter((r) => {
         return r.id.toLocaleString().includes(keyword);
@@ -62,8 +63,49 @@ const Filter = () => {
     } else {
       setDataFilter(USERS);
     }
-
     setId(keyword);
+  };
+
+  const sortBy = (k) => {
+    if (k === "id") {
+      if (sort) {
+        const res = USERS.sort((a, b) => (a.id > b.id ? 1 : -1));
+        setDataFilter(res);
+        setSort(!sort);
+        console.log(res);
+      } else {
+        const res = USERS.sort((a, b) => (a.id < b.id ? 1 : -1));
+        setDataFilter(res);
+        setSort(!sort);
+        console.log(res);
+      }
+    } else if (k === "age") {
+      if (sort) {
+        const res = USERS.sort((a, b) => (a.age > b.age ? 1 : -1));
+        setDataFilter(res);
+        setSort(!sort);
+        console.log(res);
+      } else {
+        const res = USERS.sort((a, b) => (a.age < b.agek ? 1 : -1));
+        setDataFilter(res);
+        setSort(!sort);
+        console.log(res);
+      }
+    } else if (k === "name") {
+      if (sort) {
+        const res = USERS.sort((a, b) => a.name.localeCompare(b.name));
+        setDataFilter(res);
+        setSort(!sort);
+        console.log(res);
+      } else {
+        const res = USERS.sort((a, b) => b.name.localeCompare(a.name));
+        setDataFilter(res);
+        setSort(!sort);
+        console.log(res);
+      }
+    } else {
+      console.log("error");
+    }
   };
 
   return (
@@ -82,22 +124,10 @@ const Filter = () => {
       </div>
       <table>
         <thead>
-          <tr>
-            {keys.map((k, i) => {
-              return <th key={i}>{k}</th>;
-            })}
-          </tr>
+          <Thead keys={keys} sortBy={sortBy} sort={sort} />
         </thead>
         <tbody>
-          {dataFilter.map((e, i) => {
-            return (
-              <tr key={i}>
-                <td>{e.id}</td>
-                <td>{e.name}</td>
-                <td>{e.age}</td>
-              </tr>
-            );
-          })}
+          <Tbody dataFilter={dataFilter} />
         </tbody>
       </table>
     </header>
